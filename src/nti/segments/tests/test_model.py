@@ -21,7 +21,6 @@ from hamcrest import is_not
 from hamcrest import none
 from hamcrest import not_none
 
-
 from z3c.baseregistry.baseregistry import BaseComponents
 
 from zope import interface
@@ -34,11 +33,11 @@ from nti.externalization.internalization import find_factory_for
 
 from nti.externalization.tests import externalizes
 
-from nti.segments.interfaces import IFilterSet
-from nti.segments.interfaces import ISegment
 from nti.segments.interfaces import ISegmentsContainer
+from nti.segments.interfaces import IUserFilterSet
+from nti.segments.interfaces import IUserSegment
 
-from nti.segments.model import Segment
+from nti.segments.model import UserSegment
 from nti.segments.model import SegmentsContainer
 from nti.segments.model import install_segments_container
 
@@ -62,7 +61,7 @@ class MockSite(object):
         return self.site_man
 
 
-@interface.implementer(IFilterSet)
+@interface.implementer(IUserFilterSet)
 class TestFilterSet(object):
     pass
 
@@ -72,7 +71,7 @@ class TestModel(TestCase):
     layer = SharedConfiguringTestLayer
 
     def test_valid_interface(self):
-        assert_that(Segment(title=u'All Users'), verifiably_provides(ISegment))
+        assert_that(UserSegment(title=u'All Users'), verifiably_provides(IUserSegment))
 
     def _internalize(self, external):
         factory = find_factory_for(external)
@@ -84,7 +83,7 @@ class TestModel(TestCase):
 
     def test_internalize(self):
         ext_obj = {
-            "MimeType": Segment.mime_type,
+            "MimeType": UserSegment.mime_type,
             "title": u"my segment",
         }
         segment = self._internalize(ext_obj)
@@ -93,11 +92,11 @@ class TestModel(TestCase):
         ))
 
     def test_externalize(self):
-        segment = Segment(title=u'All Users',
-                          filter_set=TestFilterSet())
+        segment = UserSegment(title=u'All Users',
+                              filter_set=TestFilterSet())
         assert_that(segment,
                     externalizes(all_of(has_entries({
-                        'MimeType': Segment.mime_type,
+                        'MimeType': UserSegment.mime_type,
                         'title': 'All Users',
                         'filter_set': not_none(),
                         'CreatedTime': is_(Number),
@@ -105,14 +104,14 @@ class TestModel(TestCase):
                     }))))
 
     def test_container(self):
-        segment = Segment(title=u'All Users',
-                          filter_set=TestFilterSet())
+        segment = UserSegment(title=u'All Users',
+                              filter_set=TestFilterSet())
         container = SegmentsContainer()
         container.add(segment)
         assert_that(container, has_length(is_(1)))
 
-        segment_two = Segment(title=u'All Users Two',
-                              filter_set=TestFilterSet())
+        segment_two = UserSegment(title=u'All Users Two',
+                                  filter_set=TestFilterSet())
         container.add(segment_two)
         assert_that(container, has_length(is_(2)))
 

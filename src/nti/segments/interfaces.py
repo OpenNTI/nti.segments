@@ -32,6 +32,12 @@ class IFilterSet(Interface):
     """
 
 
+class IUserFilterSet(IFilterSet):
+    """
+    A filter set applied to user objects.
+    """
+
+
 class ISegment(IContained,
                ICreated,
                ILastModified,
@@ -43,6 +49,16 @@ class ISegment(IContained,
                           required=True)
 
     filter_set = Object(IFilterSet,
+                        title=u"Filter set defining the set of objects.",
+                        required=False)
+
+
+class IUserSegment(ISegment):
+    """
+    Segment operating on user objects.
+    """
+
+    filter_set = Object(IUserFilterSet,
                         title=u"Filter set defining the set of objects.",
                         required=False)
 

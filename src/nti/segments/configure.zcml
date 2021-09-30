@@ -15,8 +15,8 @@
 			 provides="zope.container.interfaces.INameChooser"/>
 
 	<ext:registerAutoPackageIO
-		root_interfaces=".interfaces.ISegment
-	                     .interfaces.IFilterSet"
+		root_interfaces=".interfaces.IUserSegment
+	                     .interfaces.IUserFilterSet"
 		modules=".model" />
 
 </configure>

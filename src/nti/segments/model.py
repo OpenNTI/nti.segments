@@ -26,20 +26,19 @@ from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.schema.schema import SchemaConfigured
 
-from nti.segments.interfaces import ISegment
 from nti.segments.interfaces import ISegmentsContainer
+from nti.segments.interfaces import IUserSegment
 
 logger = __import__('logging').getLogger(__name__)
 
 
-@interface.implementer(ISegment)
-class Segment(PersistentCreatedModDateTrackingObject,
-              SchemaConfigured,
-              Contained):
+@interface.implementer(IUserSegment)
+class UserSegment(PersistentCreatedModDateTrackingObject,
+                  SchemaConfigured,
+                  Contained):
+    createDirectFieldProperties(IUserSegment)
 
-    createDirectFieldProperties(ISegment)
-
-    mimeType = mime_type = "application/vnd.nextthought.segments.segment"
+    mimeType = mime_type = "application/vnd.nextthought.segments.usersegment"
 
 
 @interface.implementer(ISegmentsContainer)
