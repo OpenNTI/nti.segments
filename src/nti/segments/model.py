@@ -52,8 +52,8 @@ class SegmentsContainer(CaseInsensitiveLastModifiedBTreeContainer,
         self[segment.id] = segment
         return segment
 
-    def remove(self, segment, event=True):
-        key = getattr(segment, 'id', event)
+    def remove(self, segment):
+        key = getattr(segment, 'id', segment)
         try:
             del self[key]
             result = True

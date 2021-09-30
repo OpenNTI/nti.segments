@@ -119,7 +119,8 @@ class TestModel(TestCase):
         container.remove(segment)
         assert_that(container, has_length(is_(1)))
 
-        container.remove(segment_two)
+        # can also remove by id
+        container.remove(segment_two.id)
         assert_that(container, has_length(is_(0)))
 
     def test_install_container(self):
