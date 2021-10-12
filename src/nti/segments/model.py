@@ -139,7 +139,7 @@ class IsDeactivatedFilterSet(SchemaConfigured):
 
         return deactivated_ids
 
-    def resolve(self, initial_set):
+    def apply(self, initial_set):
         if self.Deactivated:
             return initial_set.intersection(self.deactivated_intids)
         return initial_set.difference(self.deactivated_intids)

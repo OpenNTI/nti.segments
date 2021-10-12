@@ -59,13 +59,14 @@ class IFilterSet(Interface):
     the implementations (e.g. all users enrolled in a course)
     """
 
-    def resolve(initial_set):
+    def apply(initial_set):
         """
         :param initial_set: An :class:`IIntIdSet` object providing the initial
         set of IDs in the population
 
-        Given an initial set of object ids, resolve the objects that meet the
-        criteria of the filter set.
+        Given an initial set of object ids, return an :class:`IIntIdSet`
+        consisting of the subset of these intids that meet the criteria of this
+        filter set.
         """
 
 
