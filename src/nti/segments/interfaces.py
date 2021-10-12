@@ -26,7 +26,7 @@ from nti.schema.field import Bool
 from nti.schema.field import ValidTextLine
 
 
-class IResultSet(Interface):
+class IIntIdSet(Interface):
 
     def intids(self):
         """
@@ -36,20 +36,20 @@ class IResultSet(Interface):
     def intersection(self, result_set):
         """
         Compute the result of the intersection between this and the given result
-        set and return as a new :class:`IResultSet`
+        set and return as a new :class:`IIntIdSet`
         """
 
     def union(self, result_set):
         """
         Compute the result of the union between this and the given result
-        set and return as a new :class:`IResultSet`
+        set and return as a new :class:`IIntIdSet`
         """
 
     def difference(self, result_set):
         """
         Compute the result of items in this result set for which there is no
         matching item in the given result set and return as a new
-        :class:`IResultSet`
+        :class:`IIntIdSet`
         """
 
 
@@ -61,7 +61,7 @@ class IFilterSet(Interface):
 
     def resolve(initial_set):
         """
-        :param initial_set: An :class:`IResultSet` object providing the initial
+        :param initial_set: An :class:`IIntIdSet` object providing the initial
         set of IDs in the population
 
         Given an initial set of object ids, resolve the objects that meet the

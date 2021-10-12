@@ -36,7 +36,7 @@ from nti.schema.fieldproperty import createDirectFieldProperties
 from nti.schema.schema import SchemaConfigured
 
 from nti.segments.interfaces import IIsDeactivatedFilterSet
-from nti.segments.interfaces import IResultSet
+from nti.segments.interfaces import IIntIdSet
 from nti.segments.interfaces import ISegmentsContainer
 from nti.segments.interfaces import IUserSegment
 
@@ -95,8 +95,8 @@ def _to_intids(result_set):
     return result_set.intids()
 
 
-@interface.implementer(IResultSet)
-class ResultSet(object):
+@interface.implementer(IIntIdSet)
+class IntIdSet(object):
 
     def __init__(self, intids, family=BTrees.family64):
         self.family = family
@@ -107,15 +107,15 @@ class ResultSet(object):
 
     def intersection(self, result_set):
         other_ids = _to_intids(result_set)
-        return ResultSet(self.family.IF.intersection(self._intids, other_ids))
+        return IntIdSet(self.family.IF.intersection(self._intids, other_ids))
 
     def union(self, result_set):
         other_ids = _to_intids(result_set)
-        return ResultSet(self.family.IF.union(self._intids, other_ids))
+        return IntIdSet(self.family.IF.union(self._intids, other_ids))
 
     def difference(self, result_set):
         other_ids = _to_intids(result_set)
-        return ResultSet(self.family.IF.difference(self._intids, other_ids))
+        return IntIdSet(self.family.IF.difference(self._intids, other_ids))
 
 
 @interface.implementer(IIsDeactivatedFilterSet)
