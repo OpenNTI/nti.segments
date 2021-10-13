@@ -33,10 +33,14 @@ from nti.externalization.internalization import find_factory_for
 
 from nti.externalization.tests import externalizes
 
+from nti.segments.interfaces import ENROLLED_IN
+from nti.segments.interfaces import ICourseMembershipFilterSet
 from nti.segments.interfaces import ISegmentsContainer
 from nti.segments.interfaces import IUserFilterSet
 from nti.segments.interfaces import IUserSegment
+from nti.segments.interfaces import NOT_ENROLLED_IN
 
+from nti.segments.model import CourseMembershipFilterSet
 from nti.segments.model import UserSegment
 from nti.segments.model import SegmentsContainer
 from nti.segments.model import install_segments_container
@@ -143,3 +147,46 @@ class TestModel(TestCase):
 
         site_policy.unregisterUtility(container, ISegmentsContainer)
         del site_policy['default']['segments-container']
+
+
+class TestCourseMembershipFilterSet(TestCase):
+
+    layer = SharedConfiguringTestLayer
+
+    def test_valid_interface(self):
+        course_ntiid = u'tag:nextthought.com,2021-10-11:filterset-one'
+        assert_that(CourseMembershipFilterSet(course_ntiid=course_ntiid,
+                                              operator=ENROLLED_IN),
+                    verifiably_provides(ICourseMembershipFilterSet))
+
+    def _internalize(self, external):
+        factory = find_factory_for(external)
+        assert_that(factory, is_(not_none()))
+        new_io = factory()
+        if new_io is not None:
+            update_from_external_object(new_io, external)
+        return new_io
+
+    def test_internalize(self):
+        course_ntiid = u'tag:nextthought.com,2021-10-11:filterset-one'
+        ext_obj = {
+            "MimeType": CourseMembershipFilterSet.mime_type,
+            "course_ntiid": course_ntiid,
+            "operator": NOT_ENROLLED_IN
+        }
+        filter_set = self._internalize(ext_obj)
+        assert_that(filter_set, has_properties(
+            course_ntiid=course_ntiid,
+            operator=NOT_ENROLLED_IN
+        ))
+
+    def test_externalize(self):
+        course_ntiid = u'tag:nextthought.com,2021-10-11:filterset-one'
+        filter_set = CourseMembershipFilterSet(course_ntiid=course_ntiid,
+                                            operator=ENROLLED_IN)
+        assert_that(filter_set,
+                    externalizes(all_of(has_entries({
+                        'MimeType': CourseMembershipFilterSet.mime_type,
+                        "course_ntiid": course_ntiid,
+                        "operator": ENROLLED_IN,
+                    }))))

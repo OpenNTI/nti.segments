@@ -56,6 +56,7 @@ setup(
         'BTrees',
         'nti.base',
         'nti.containers',
+        'nti.contenttypes.courses',
         'nti.dublincore',
         'nti.externalization',
         'nti.property',

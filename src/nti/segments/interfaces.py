@@ -15,6 +15,7 @@ from zope.container.interfaces import IContained
 from zope.interface import Interface
 
 from zope.schema import Object
+from zope.schema import vocabulary
 
 from nti.base.interfaces import ICreated
 from nti.base.interfaces import ILastModified
@@ -22,8 +23,21 @@ from nti.base.interfaces import ITitled
 
 from nti.coremetadata.interfaces import IShouldHaveTraversablePath
 
+from nti.ntiids.schema import ValidNTIID
+
 from nti.schema.field import Bool
+from nti.schema.field import ValidChoice
 from nti.schema.field import ValidTextLine
+
+ENROLLED_IN = u"enrolled in"
+NOT_ENROLLED_IN = u"not enrolled in"
+
+ENROLLMENT_OPS = (ENROLLED_IN,
+                  NOT_ENROLLED_IN)
+
+ENROLLMENT_OP_VOCABULARY = vocabulary.SimpleVocabulary(
+    tuple(vocabulary.SimpleTerm(x) for x in ENROLLMENT_OPS)
+)
 
 
 class IIntIdSet(Interface):
@@ -85,6 +99,22 @@ class IIsDeactivatedFilterSet(IUserFilterSet):
                        description=u'Whether to include only deactivated or activated users',
                        required=True,
                        default=False)
+
+
+class ICourseMembershipFilterSet(IUserFilterSet):
+    """
+    A filter set describing users enrolled, or not enrolled, in the given
+    course.
+    """
+
+    course_ntiid = ValidNTIID(title=u'Course NTIID',
+                              description=u'NTIID of the course in which to check membership.',
+                              required=True)
+
+    operator = ValidChoice(title=u'Operator',
+                           description=u'Whether to check for enrolled or not enrolled users.',
+                           vocabulary=ENROLLMENT_OP_VOCABULARY,
+                           required=True)
 
 
 class ISegment(IContained,
