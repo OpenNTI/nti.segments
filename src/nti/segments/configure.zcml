@@ -16,6 +16,7 @@
 
     <ext:registerAutoPackageIO
             root_interfaces=".interfaces.IUserSegment
+                             .interfaces.IIsDeactivatedFilterSet
                              .interfaces.IUserFilterSet"
             modules=".model"/>
 

@@ -8,10 +8,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import BTrees
+
 from zope import component
 from zope import interface
 
 from zope.app.appsetup.bootstrap import ensureUtility
+
+from zope.cachedescriptors.property import Lazy
 
 from zope.container.contained import Contained
 
@@ -20,12 +24,19 @@ from zope.container.interfaces import INameChooser
 from nti.containers.containers import AbstractNTIIDSafeNameChooser
 from nti.containers.containers import CaseInsensitiveLastModifiedBTreeContainer
 
+from nti.coremetadata.interfaces import IX_IS_DEACTIVATED
+from nti.coremetadata.interfaces import IX_TOPICS
+
+from nti.dataserver.users import get_entity_catalog
+
 from nti.dublincore.datastructures import PersistentCreatedModDateTrackingObject
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.schema.schema import SchemaConfigured
 
+from nti.segments.interfaces import IIsDeactivatedFilterSet
+from nti.segments.interfaces import IIntIdSet
 from nti.segments.interfaces import ISegmentsContainer
 from nti.segments.interfaces import IUserSegment
 
@@ -75,3 +86,60 @@ def install_segments_container(site_manager_container):
                          ISegmentsContainer,
                          'segments-container',
                          SegmentsContainer)
+
+
+def _to_intids(result_set):
+    if not hasattr(result_set, 'intids'):
+        return result_set
+
+    return result_set.intids()
+
+
+@interface.implementer(IIntIdSet)
+class IntIdSet(object):
+
+    def __init__(self, intids, family=BTrees.family64):
+        self.family = family
+        self._intids = intids
+
+    def intids(self):
+        return self._intids
+
+    def intersection(self, result_set):
+        other_ids = _to_intids(result_set)
+        return IntIdSet(self.family.IF.intersection(self._intids, other_ids))
+
+    def union(self, result_set):
+        other_ids = _to_intids(result_set)
+        return IntIdSet(self.family.IF.union(self._intids, other_ids))
+
+    def difference(self, result_set):
+        other_ids = _to_intids(result_set)
+        return IntIdSet(self.family.IF.difference(self._intids, other_ids))
+
+
+@interface.implementer(IIsDeactivatedFilterSet)
+class IsDeactivatedFilterSet(SchemaConfigured):
+
+    createDirectFieldProperties(IIsDeactivatedFilterSet)
+
+    mimeType = mime_type = "application/vnd.nextthought.segments.isdeactivatedfilterset"
+
+    def __init__(self, **kwargs):
+        SchemaConfigured.__init__(self, **kwargs)
+
+    @Lazy
+    def entity_catalog(self):
+        return get_entity_catalog()
+
+    @Lazy
+    def deactivated_intids(self):
+        deactivated_idx = self.entity_catalog[IX_TOPICS][IX_IS_DEACTIVATED]
+        deactivated_ids = self.entity_catalog.family.IF.Set(deactivated_idx.getIds() or ())
+
+        return deactivated_ids
+
+    def apply(self, initial_set):
+        if self.Deactivated:
+            return initial_set.intersection(self.deactivated_intids)
+        return initial_set.difference(self.deactivated_intids)
