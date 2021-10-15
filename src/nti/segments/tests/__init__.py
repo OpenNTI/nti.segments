@@ -20,7 +20,8 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
                                  GCLayerMixin,
                                  ConfiguringLayerMixin):
 
-    set_up_packages = ('nti.dataserver', 'nti.segments',)
+    set_up_packages = ('nti.dataserver', 'nti.segments',
+                       'nti.segments.tests')
 
     @classmethod
     def setUp(cls):
