@@ -1,0 +1,12 @@
+<!-- -*- mode: nxml -*- -->
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:ext="http://nextthought.com/ntp/ext">
+
+    <!-- Externalization -->
+    <include package="nti.externalization" file="meta.zcml"/>
+    <include package="nti.externalization"/>
+    <ext:registerAutoPackageIO
+            root_interfaces="nti.segments.tests.interfaces.ITestUserFilterSet"
+            modules=".test_model"/>
+
+</configure>

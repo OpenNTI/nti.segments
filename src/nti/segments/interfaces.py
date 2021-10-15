@@ -5,6 +5,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+# pylint: disable=inherit-non-class
+# pylint: disable=no-self-argument
+
 from zope.annotation.interfaces import IAnnotatable
 
 from zope.container.constraints import contains
@@ -23,6 +26,7 @@ from nti.base.interfaces import ITitled
 from nti.coremetadata.interfaces import IShouldHaveTraversablePath
 
 from nti.schema.field import Bool
+from nti.schema.field import IndexedIterable
 from nti.schema.field import ValidTextLine
 
 
@@ -76,6 +80,36 @@ class IUserFilterSet(IFilterSet):
     """
 
 
+def simple_filter_set(filter_set):
+    return (not IUnionUserFilterSet.providedBy(filter_set)
+            and not IIntersectionUserFilterSet.providedBy(filter_set))
+
+
+class IUnionUserFilterSet(IUserFilterSet):
+    """
+    A filter set containing a list of other filter sets whose result is the
+    union of results from the contained filter sets.
+    """
+
+    filter_sets = IndexedIterable(title=u'Filter Sets',
+                                  description=u'Filter sets whose results will be unioned.',
+                                  value_type=Object(IUserFilterSet,
+                                                    constraint=simple_filter_set),
+                                  min_length=1)
+
+
+class IIntersectionUserFilterSet(IUserFilterSet):
+    """
+    A filter set containing a list of other filter sets whose result is the
+    intersection of results from the contained filter sets.
+    """
+
+    filter_sets = IndexedIterable(title=u'Filter Sets',
+                                  description=u'Filter sets whose results will be unioned.',
+                                  value_type=Object(IUnionUserFilterSet),
+                                  min_length=1)
+
+
 class IIsDeactivatedFilterSet(IUserFilterSet):
     """
     A filter set describing users with a given deactivation status.
@@ -107,7 +141,7 @@ class IUserSegment(ISegment):
     Segment operating on user objects.
     """
 
-    filter_set = Object(IUserFilterSet,
+    filter_set = Object(IIntersectionUserFilterSet,
                         title=u"Filter set defining the set of objects.",
                         required=False)
 

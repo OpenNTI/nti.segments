@@ -35,9 +35,11 @@ from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.schema.schema import SchemaConfigured
 
-from nti.segments.interfaces import IIsDeactivatedFilterSet
+from nti.segments.interfaces import IIntersectionUserFilterSet
 from nti.segments.interfaces import IIntIdSet
+from nti.segments.interfaces import IIsDeactivatedFilterSet
 from nti.segments.interfaces import ISegmentsContainer
+from nti.segments.interfaces import IUnionUserFilterSet
 from nti.segments.interfaces import IUserSegment
 
 logger = __import__('logging').getLogger(__name__)
@@ -116,6 +118,36 @@ class IntIdSet(object):
     def difference(self, result_set):
         other_ids = _to_intids(result_set)
         return IntIdSet(self.family.IF.difference(self._intids, other_ids))
+
+
+@interface.implementer(IUnionUserFilterSet)
+class UnionUserFilterSet(SchemaConfigured):
+
+    createDirectFieldProperties(IUnionUserFilterSet)
+
+    mimeType = mime_type = "application/vnd.nextthought.segments.UnionUserFilterSet"
+
+    def apply(self, initial_set):
+        result = self.filter_sets[0].apply(initial_set)
+        for filter_set in self.filter_sets[1:]:
+            result = result.union(filter_set.apply(initial_set))
+
+        return result
+
+
+@interface.implementer(IIntersectionUserFilterSet)
+class IntersectionUserFilterSet(SchemaConfigured):
+
+    createDirectFieldProperties(IIntersectionUserFilterSet)
+
+    mimeType = mime_type = "application/vnd.nextthought.segments.IntersectionUserFilterSet"
+
+    def apply(self, initial_set):
+        result = self.filter_sets[0].apply(initial_set)
+        for filter_set in self.filter_sets[1:]:
+            result = result.intersection(filter_set.apply(result))
+
+        return result
 
 
 @interface.implementer(IIsDeactivatedFilterSet)
