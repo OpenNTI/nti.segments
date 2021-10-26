@@ -10,10 +10,6 @@
     <include package="nti.externalization" file="meta.zcml"/>
     <include package="nti.externalization"/>
 
-    <adapter factory=".model._SegmentsNameChooser"
-             for=".interfaces.ISegmentsContainer"
-             provides="zope.container.interfaces.INameChooser"/>
-
     <ext:registerAutoPackageIO
             root_interfaces=".interfaces.IUserSegment
                              .interfaces.IUnionUserFilterSet

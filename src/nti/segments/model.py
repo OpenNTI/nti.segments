@@ -60,7 +60,7 @@ class SegmentsContainer(CaseInsensitiveLastModifiedBTreeContainer,
 
     def add(self, segment):
         if not getattr(segment, 'id', None):
-            segment.id = INameChooser(self).chooseName(segment.title, segment)
+            segment.id = INameChooser(self).chooseName('', segment)
         self[segment.id] = segment
         return segment
 
@@ -72,15 +72,6 @@ class SegmentsContainer(CaseInsensitiveLastModifiedBTreeContainer,
         except KeyError:
             result = False
         return result
-
-
-@component.adapter(ISegmentsContainer)
-@interface.implementer(INameChooser)
-class _SegmentsNameChooser(AbstractNTIIDSafeNameChooser):
-    """
-    Handles NTIID-safe name choosing for a stored segment.
-    """
-    leaf_iface = ISegmentsContainer
 
 
 def install_segments_container(site_manager_container):
