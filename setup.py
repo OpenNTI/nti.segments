@@ -11,6 +11,7 @@ TESTS_REQUIRE = [
     'fudge',
     'nti.testing',
     'zope.testrunner',
+    'z3c.baseregistry'
 ]
 
 
