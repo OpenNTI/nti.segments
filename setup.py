@@ -56,6 +56,7 @@ setup(
         'setuptools',
         'BTrees',
         'nti.base',
+        'nti.coremetadata',
         'nti.containers',
         'nti.dublincore',
         'nti.externalization',
