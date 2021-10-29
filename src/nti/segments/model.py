@@ -151,11 +151,11 @@ class IsDeactivatedFilterSet(SchemaConfigured):
     def __init__(self, **kwargs):
         SchemaConfigured.__init__(self, **kwargs)
 
-    @Lazy
+    @property
     def entity_catalog(self):
         return get_entity_catalog()
 
-    @Lazy
+    @property
     def deactivated_intids(self):
         deactivated_idx = self.entity_catalog[IX_TOPICS][IX_IS_DEACTIVATED]
         deactivated_ids = self.entity_catalog.family.IF.Set(deactivated_idx.getIds() or ())
