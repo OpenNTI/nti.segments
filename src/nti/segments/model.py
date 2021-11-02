@@ -10,19 +10,15 @@ from __future__ import print_function
 
 import BTrees
 
-from zope import component
 from zope import interface
 
 from zope.app.appsetup.bootstrap import ensureUtility
-
-from zope.cachedescriptors.property import Lazy
 
 from zope.container.contained import Contained
 
 from zope.container.interfaces import INameChooser
 
-from nti.containers.containers import AbstractNTIIDSafeNameChooser
-from nti.containers.containers import CaseInsensitiveLastModifiedBTreeContainer
+from nti.containers.containers import CaseInsensitiveCheckingLastModifiedBTreeContainer
 
 from nti.coremetadata.interfaces import IX_IS_DEACTIVATED
 from nti.coremetadata.interfaces import IX_TOPICS
@@ -55,8 +51,10 @@ class UserSegment(PersistentCreatedModDateTrackingObject,
 
 
 @interface.implementer(ISegmentsContainer)
-class SegmentsContainer(CaseInsensitiveLastModifiedBTreeContainer,
+class SegmentsContainer(CaseInsensitiveCheckingLastModifiedBTreeContainer,
                         Contained):
+
+    createDirectFieldProperties(ISegmentsContainer)
 
     def add(self, segment):
         if not getattr(segment, 'id', None):
