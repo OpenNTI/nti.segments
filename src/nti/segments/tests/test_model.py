@@ -13,6 +13,7 @@ import BTrees
 
 from hamcrest import all_of
 from hamcrest import assert_that
+from hamcrest import calling
 from hamcrest import contains
 from hamcrest import contains_inanyorder
 from hamcrest import has_entries
@@ -24,12 +25,15 @@ from hamcrest import is_
 from hamcrest import is_not
 from hamcrest import none
 from hamcrest import not_none
+from hamcrest import raises
 
 from z3c.baseregistry.baseregistry import BaseComponents
 
 from zope import interface
 
 from zope.component import globalSiteManager as BASE
+
+from zope.container.interfaces import InvalidItemType
 
 from nti.externalization import update_from_external_object
 
@@ -91,9 +95,14 @@ class TestModel(TestCase):
         filter_set_b = UnionUserFilterSet(filter_sets=(TestFilterSet([2, 3, 4]),))
         filter_set = IntersectionUserFilterSet(filter_sets=(filter_set_a,
                                                             filter_set_b))
+        container = SegmentsContainer()
+
+        # Can only add segments
+        assert_that(calling(container.add).with_args(filter_set),
+                    raises(InvalidItemType))
+
         segment = UserSegment(title=u'All Users',
                               filter_set=filter_set)
-        container = SegmentsContainer()
         container.add(segment)
         assert_that(container, has_length(is_(1)))
 
