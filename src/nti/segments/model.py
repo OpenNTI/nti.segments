@@ -114,7 +114,7 @@ class UnionUserFilterSet(SchemaConfigured):
 
     createDirectFieldProperties(IUnionUserFilterSet)
 
-    mimeType = mime_type = "application/vnd.nextthought.segments.UnionUserFilterSet"
+    mimeType = mime_type = "application/vnd.nextthought.segments.unionuserfilterset"
 
     def apply(self, initial_set):
         result = self.filter_sets[0].apply(initial_set)
@@ -129,7 +129,7 @@ class IntersectionUserFilterSet(SchemaConfigured):
 
     createDirectFieldProperties(IIntersectionUserFilterSet)
 
-    mimeType = mime_type = "application/vnd.nextthought.segments.IntersectionUserFilterSet"
+    mimeType = mime_type = "application/vnd.nextthought.segments.intersectionuserfilterset"
 
     def apply(self, initial_set):
         result = self.filter_sets[0].apply(initial_set)
