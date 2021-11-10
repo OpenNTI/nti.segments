@@ -91,7 +91,7 @@ class IntIdSet(object):
 
     def __init__(self, intids, family=BTrees.family64):
         self.family = family
-        self._intids = intids
+        self._intids = self.family.IF.TreeSet(intids)
 
     def intids(self):
         return self._intids
@@ -107,6 +107,12 @@ class IntIdSet(object):
     def difference(self, result_set):
         other_ids = _to_intids(result_set)
         return IntIdSet(self.family.IF.difference(self._intids, other_ids))
+
+    def add(self, uid):
+        self._intids.insert(uid)
+
+    def remove(self, uid):
+        self._intids.remove(uid)
 
 
 @interface.implementer(IUnionUserFilterSet)
